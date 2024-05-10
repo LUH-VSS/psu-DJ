@@ -1,0 +1,16 @@
+Feedback
+
+1. 2/4
+2. 0/10
+
+Achieved Points: 2/14
+
+Notes:
+    1. Die PREDICT Mengen sind auf Regeln (A -> α) und nicht auf Nicht-Terminalen definiert. [-1]
+       Die Grammatik ist nicht in LL1, muss also umgeformt werden. [-1]
+       FOLLOW(stream) = {} [-0]
+
+
+PINs: 8320,9596
+
+clone time: 2024-05-08 12:11:30.979588
