@@ -1,0 +1,13 @@
+Feedback
+
+    1. 4/4
+    2. 5/6
+
+Achieved Points: 9/10
+
+Notes:
+    Siehe Uebungsblatt 6_korr.pdf
+
+PINs: 8320,9596
+
+clone time: 2024-05-30 12:00:51.361310
