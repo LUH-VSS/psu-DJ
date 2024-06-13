@@ -1,0 +1,16 @@
+Feedback
+
+    1. 0/4
+    2. 5/5
+    3. 0/3
+
+Achieved Points: 5/12
+
+Notes:
+    1: Nicht bearbeitet
+    3: Das Programm soll in der Intermediate Representation aus der Vorlesung
+       geschrieben sein (nicht etwa in LLVM IR).
+
+PINs: 8320,9596
+
+clone time: 2024-06-12 10:21:45.947283
