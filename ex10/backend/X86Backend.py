@@ -296,7 +296,13 @@ class RegisterCallingConvention(StackCallingConvention):
             return super().function_entry(function)
 
         # TODO: Slots für Variablen UND Parameter
+        self.backend.create_stack_frame(function)
+        
         # TODO: Parameter mit Slots assoziieren
+        for i, param in enumerate(function.parameters):
+            reg = self.backend.registers[i]
+            self.backend.emit_instr("mov", reg, self._var_operand(param), comment=f"save {param}")
+
         self.RA.dump_state()
 
     def call_prologue(self, instr: Call):
@@ -304,15 +310,22 @@ class RegisterCallingConvention(StackCallingConvention):
             return super().call_prologue(instr)
 
         # TODO: Argumente in Register laden
-        raise NotImplementedError("Register Calling Convention not implemeted")
+        for i, arg in enumerate(instr.arguments):
+            reg = self.backend.registers[i]
+            self.RA.load(arg, reg, modify=False)
 
     def call_epilogue(self, instr: Call):
         if len(instr.arguments) > len(self.backend.registers):
             return super().call_epilogue(instr)
 
         # TODO: Ein Call zerstört den Zustand
+        self.RA.reset_state()
+
         # TODO: Rückgabewert in Register schreiben
-        raise NotImplementedError("Register Calling Convention not implemeted")
+        ret_reg = self.backend.registers[0]
+        if instr.retval:
+            self.RA.write(ret_reg, instr.retval)
+
         self.RA.dump_state()
 
 
@@ -394,6 +407,10 @@ class RememberingRegisterAllocator(SpillingRegisterAllocator):
 
         self.var_referenced: set[Variable] = set()
         # TODO: Find all variables that are used in Reference
+        for bb in function.basic_blocks:
+            for instr in bb.instructions:
+                if isinstance(instr, Reference):
+                    self.var_referenced.add(instr.obj)
 
         self.reset_state()
 
@@ -405,9 +422,17 @@ class RememberingRegisterAllocator(SpillingRegisterAllocator):
         self.reg_free: dict[Register, bool] = {reg: True for reg in self.backend.registers}
 
         # TODO: Handle end of basic block   (Goto+IfGoto)
+        if isinstance(instr, (Goto, IfGoto)):
+            self._spill_all_registers()
         # TODO: Handle call   instructions  (Call)
+        if isinstance(instr, Call):
+            self._spill_all_registers()
         # TODO: Handle store  instructions  (Store)
+        if isinstance(instr, Store):
+            self._spill_and_kill(instr.value)
         # TODO: Handle load   instructions  (Load)
+        if isinstance(instr, Load):
+            self._spill_and_kill(instr.dst)
 
     def after_Instruction(self, instr):
         self.dump_state()
